@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Account, User } from "../models/usermodel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { authMiddleware } from "../middleware/middleware.js";
 const router1 = Router();
 router1.post("/signup",async (req,res)=>{
     try{
@@ -49,7 +50,7 @@ router1.post("/login",async(req,res)=>{
     const token=jwt.sign({userId:user._id},process.env.JWT_SECRET);
     res.json({message:"Login successful",token});
 })
-router1.put("/updateProfile",async(req,res)=>{
+router1.put("/updateProfile", authMiddleware,async(req,res)=>{
     try{
 await User.updateOne({_id:req.body.userId},req.body)
 res.json({message:"Profile updated successfully"})
